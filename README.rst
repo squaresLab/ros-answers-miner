@@ -28,4 +28,4 @@ To run this tool:
 
 .. code::
 
-   (rosdiscover) $ ros-answers-miner
+   (rosdiscover) $ ros-answers-miner scrape https://answers.ros.org/question/299232/roslaunch-python-arg-substitution-finds-wrong-package-folder-path
