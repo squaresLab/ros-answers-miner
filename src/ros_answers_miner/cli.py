@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from .core import Answer, Comment, Question
+from .models import Answer, Comment, Question
 
 
 def main() -> None:

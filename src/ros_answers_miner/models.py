@@ -3,7 +3,7 @@
 This module provides data structures that represent the contents of ROS
 Answers.
 """
-__all__ = ('Answer', 'Comment', 'Question')
+__all__ = ('Answer', 'Comment', 'Question', 'User')
 
 from typing import AbstractSet
 
@@ -24,3 +24,8 @@ class Answer:
 @attr.s(auto_attribs=True)
 class Comment:
     contents: str
+
+
+@attr.s(auto_attribs=True, frozen=True)
+class User:
+    url: str
