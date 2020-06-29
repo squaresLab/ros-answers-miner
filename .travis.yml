@@ -1,0 +1,12 @@
+language: python
+matrix:
+  include:
+  - python: 3.6
+    env: TOXENV=py36
+install:
+- pip install -r requirements.dev.txt
+- pip install -e .
+script:
+- tox
+notifications:
+  email: false
