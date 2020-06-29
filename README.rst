@@ -19,3 +19,13 @@ To install this package from source within a virtual environment using pipenv:
    $ pipenv shell
    (rosdiscover) $ pip install -r requirements.dev.txt
    (rosdiscover) $ pip install -e .
+
+
+Usage
+-----
+
+To run this tool:
+
+.. code::
+
+   (rosdiscover) $ ros-answers-miner
