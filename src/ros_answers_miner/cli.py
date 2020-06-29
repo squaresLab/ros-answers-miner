@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from .models import Answer, Comment, Question
+from .parser import url_to_question
 
 
 def main() -> None:
