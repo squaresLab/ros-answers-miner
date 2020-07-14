@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from .parser import url_to_question
+from .parser import scrape_question
 
 
 def scrape(args: argparse.Namespace) -> None:
-    url = args.url
-    question = url_to_question(url)
-    print(question)
+    url = args.url   #todo fix for question
+    question = url_to_question(url) #todo fix for question_id?
+    print(question) #todo fix
 
 
 def main() -> None:
@@ -16,8 +16,8 @@ def main() -> None:
 
     p = subparsers.add_parser(
         'scrape',
-        help='extracts information from a given ROS Answers question URL')
-    p.add_argument('url', type=str, help='the URL of the ROS Answers question')
+        help='extracts information for a given ROS Answers question ID')
+    p.add_argument('id', type=int, help='the ID of the ROS Answers question')
     p.set_defaults(func=scrape)
 
     args = parser.parse_args()
