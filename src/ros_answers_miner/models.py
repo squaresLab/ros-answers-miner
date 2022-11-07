@@ -9,23 +9,42 @@ from typing import AbstractSet
 
 import attr
 
+@attr.s(auto_attribs=True, frozen=True)
+class User:
+    url: str
 
 @attr.s(auto_attribs=True)
-class Question:
-    url: str
-    tags: AbstractSet[str]
-
+class Comment:
+    date: str
+    user: User
+    content: str
 
 @attr.s(auto_attribs=True)
 class Answer:
     accepted: bool
 
+    date: str
+    votes: int
+    user: User
+
+    content: str
+    comments: AbstractSet[Comment]
 
 @attr.s(auto_attribs=True)
-class Comment:
-    contents: str
-
-
-@attr.s(auto_attribs=True, frozen=True)
-class User:
+class Question:
+    # Default information about a question
     url: str
+    date: str
+    votes: int
+    views: int
+    user: User
+    
+    # Content of the question
+    title: str
+    content: str
+
+    # Tags, comments and answers
+    tags: AbstractSet[str]
+    comments: AbstractSet[Comment]
+    answers: AbstractSet[Answer]
+    
