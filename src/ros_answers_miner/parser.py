@@ -67,9 +67,6 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
     # Obtain the information from the answers. Build the Answer object
     for i, ans in enumerate(answers):
 
-        # Get div with class js-editable-content from the answer
-        content = ans.find("div", {"class": "js-editable-content"})
-
         # These type of answers are not accepted
         accepted = False
 
@@ -77,7 +74,10 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
             accepted = True
 
         # Get content of the answer
-        content = content.find("p").text
+        content = ans.find("div", {"class": "js-editable-content"})
+
+        # Get all the elements of the content div and merge them into a string
+        content = ''.join([str(elem) for elem in content.contents])
 
         # Get the date of the answer
         date = ans.find("abbr", {"class": "timeago"})['title']
@@ -197,5 +197,5 @@ def url_to_question(url: str) -> Question:
 
     question = Question(url, date, votes, views, user, title, content, tags,
                         comments, answers)
-
+    print(question)
     return question
