@@ -48,6 +48,8 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
     next = soup.find("span", {"class": "next"})
     next_link = next.find_all("a")[0]['href']
 
+    # TODO: Get the accepted answer
+
     # Gather all the answers
     while 'page=None' not in next_link:
 
@@ -63,8 +65,6 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
         # Get span with class next 
         next = curr_soup.find("span", {"class": "next"})
         next_link = next.find_all("a")[0]['href']
-
-    # TODO: Get the accepted answer
 
     # Obtain the information from the answers. Build the Answer object
     for ans in answers:
@@ -88,30 +88,8 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
         user = ans.find("div", {"class": "user-info"}).find("a")['href'][1:]
         user = User(build_link(user))
 
-        # Get the list of comments from the comments div with class comment js-comment
-        comms = ans.find("div", {"class": "comments"})
-        comms = comms.find_all("div", {"class": "comment js-comment"})
-
-        comments = list()
-
-        for comment in comms:
-            
-            # Get the vote of the comment from the div with the class upvote js-score
-            comment_vote = comment.find("div", {"class": "upvote js-score"}).text
-
-            # Get the comment content from the div with the class comment-body
-            comment_content = comment.find("div", {"class": "comment-body"}).text.strip()
-
-            # Get the comment author from the a href with the class author
-            comment_author = comment.find("a", {"class": "author"})['href'][1:]
-            comment_author = User(build_link(comment_author))
- 
-            # Get the comment date from the abbr with the class timeago
-            comment_date = comment.find("abbr", {"class": "timeago"})['title']
-
-            # Build the comment
-            comment = Comment(comment_date, comment_vote, comment_content, comment_author)
-            comments.append(comment)
+        # Get the comments of the answer
+        comments = scrap_comment(ans)
 
         # Build the answer
         answer = Answer(accepted, date, votes, user, content, comments)
@@ -121,7 +99,33 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
     return result
 
 def scrap_comment(soup: BeautifulSoup) -> AbstractSet[Comment]:
-    pass
+    
+    # Get the list of comments from the comments div with class comment js-comment
+    comms = soup.find("div", {"class": "comments"})
+    comms = comms.find_all("div", {"class": "comment js-comment"})
+
+    comments = list()
+
+    for comment in comms:
+        
+        # Get the vote of the comment from the div with the class upvote js-score
+        comment_vote = comment.find("div", {"class": "upvote js-score"}).text
+
+        # Get the comment content from the div with the class comment-body
+        comment_content = comment.find("div", {"class": "comment-body"}).text.strip()
+
+        # Get the comment author from the a href with the class author
+        comment_author = comment.find("a", {"class": "author"})['href'][1:]
+        comment_author = User(build_link(comment_author))
+
+        # Get the comment date from the abbr with the class timeago
+        comment_date = comment.find("abbr", {"class": "timeago"})['title']
+
+        # Build the comment
+        comment = Comment(comment_date, comment_vote, comment_content, comment_author)
+        comments.append(comment)
+    
+    return comments
 
 
 def scrap_question_info(soup: BeautifulSoup) -> tuple:
