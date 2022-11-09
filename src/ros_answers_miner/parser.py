@@ -48,8 +48,6 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
     next = soup.find("span", {"class": "next"})
     next_link = next.find_all("a")[0]['href']
 
-    # TODO: Get the accepted answer
-
     # Gather all the answers
     while 'page=None' not in next_link:
 
@@ -66,14 +64,24 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
         next = curr_soup.find("span", {"class": "next"})
         next_link = next.find_all("a")[0]['href']
 
+    # Get the accepted anser
+    accepted_answer = soup.find("div", {"class": "post answer accepted-answer"})
+
+    print(len(answers))
+    if accepted_answer is not None:
+        answers.insert(0, accepted_answer)
+
     # Obtain the information from the answers. Build the Answer object
-    for ans in answers:
+    for i, ans in enumerate(answers):
 
         # Get div with class js-editable-content from the answer
         content = ans.find("div", {"class": "js-editable-content"})
 
         # These type of answers are not accepted
         accepted = False
+
+        if i == 0 and accepted_answer is not None:
+            accepted = True
 
         # Get content of the answer
         content = content.find("p").text
@@ -155,7 +163,7 @@ def url_to_question(url: str) -> Question:
     for answer in answers:
         print(answer)
         print('-'*50)
-
+    print(len(answers))
     assert False
     comments: AbstractSet[Comment] = scrap_comment(soup)
     
