@@ -38,9 +38,11 @@ def scrap_user(soup: BeautifulSoup) -> User:
     return User(build_link(link))
 
 def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
-    
+
+    result = list()
+
     # Get the div with the class post-body from the soup
-    answers = soup.find_all("div", {"class": "post-body"})[1:]
+    answers = soup.find_all("div", {"class": "post answer"})
 
     # Get span with class next 
     next = soup.find("span", {"class": "next"})
@@ -56,28 +58,67 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
         curr_soup: BeautifulSoup = BeautifulSoup(requests.get(build_link(next_link)).content, 'html.parser')
         
         # Get the div with the class post-body from the soup
-        answers += curr_soup.find_all("div", {"class": "post-body"})[1:]
-
+        answers += curr_soup.find_all("div", {"class": "post answer"})
+        
         # Get span with class next 
         next = curr_soup.find("span", {"class": "next"})
         next_link = next.find_all("a")[0]['href']
-    
-    for answer in answers:
+
+    # TODO: Get the accepted answer
+
+    # Obtain the information from the answers. Build the Answer object
+    for ans in answers:
 
         # Get div with class js-editable-content from the answer
-        content = answer.find("div", {"class": "js-editable-content"})
+        content = ans.find("div", {"class": "js-editable-content"})
 
-        # Get the body from p from the content
+        # These type of answers are not accepted
+        accepted = False
+
+        # Get content of the answer
         content = content.find("p").text
-  
-        # Get the title from the abbr with the class timeago
-        date = answer.find("abbr", {"class": "timeago"})['title']
 
+        # Get the date of the answer
+        date = ans.find("abbr", {"class": "timeago"})['title']
 
+        # Get the votes of the answer
+        votes = ans.find("div", {"class": "vote-number"}).text
 
-        break
+        # Get the user of the answer
+        user = ans.find("div", {"class": "user-info"}).find("a")['href'][1:]
+        user = User(build_link(user))
 
-    pass
+        # Get the list of comments from the comments div with class comment js-comment
+        comms = ans.find("div", {"class": "comments"})
+        comms = comms.find_all("div", {"class": "comment js-comment"})
+
+        comments = list()
+
+        for comment in comms:
+            
+            # Get the vote of the comment from the div with the class upvote js-score
+            comment_vote = comment.find("div", {"class": "upvote js-score"}).text
+
+            # Get the comment content from the div with the class comment-body
+            comment_content = comment.find("div", {"class": "comment-body"}).text.strip()
+
+            # Get the comment author from the a href with the class author
+            comment_author = comment.find("a", {"class": "author"})['href'][1:]
+            comment_author = User(build_link(comment_author))
+ 
+            # Get the comment date from the abbr with the class timeago
+            comment_date = comment.find("abbr", {"class": "timeago"})['title']
+
+            # Build the comment
+            comment = Comment(comment_date, comment_vote, comment_content, comment_author)
+            comments.append(comment)
+
+        # Build the answer
+        answer = Answer(accepted, date, votes, user, content, comments)
+
+        result.append(answer)
+    
+    return result
 
 def scrap_comment(soup: BeautifulSoup) -> AbstractSet[Comment]:
     pass
@@ -107,7 +148,10 @@ def url_to_question(url: str) -> Question:
     user: User = scrap_user(soup)
     answers: AbstractSet[Answer] = scrap_answer(soup)
     
-    print(answers)
+    for answer in answers:
+        print(answer)
+        print('-'*50)
+
     assert False
     comments: AbstractSet[Comment] = scrap_comment(soup)
     

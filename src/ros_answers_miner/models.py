@@ -16,8 +16,10 @@ class User:
 @attr.s(auto_attribs=True)
 class Comment:
     date: str
-    user: User
+    votes: int
     content: str
+    
+    user: User
 
 @attr.s(auto_attribs=True)
 class Answer:
