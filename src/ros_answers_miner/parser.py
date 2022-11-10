@@ -22,7 +22,12 @@ def scrap_user(soup: BeautifulSoup) -> User:
     user_card = soup.find_all("div", {"class": "user-card"})
 
     # From user_card, obtain the link with class js-avatar-box
-    link = user_card[0].find_all("a", {"class": "js-avatar-box"})[0]['href']
+    if user_card != []:
+        link = user_card[0].find_all("a",
+                                     {"class": "js-avatar-box"})[0]['href']
+        link = build_link(link[1:])
+    else:
+        link = 'deleted'
 
     return User(build_link(link))
 
@@ -129,7 +134,13 @@ def scrap_comment(soup: BeautifulSoup) -> AbstractSet[Comment]:
         }).text.strip()
 
         # Get the comment author from the a href with the class author
-        comment_author = comment.find("a", {"class": "author"})['href'][1:]
+        comment_author = comment.find("a", {"class": "author"})['href']
+
+        if comment_author is not None:
+            comment_author = comment_author[1:]
+        else:
+            comment_author = 'deleted'
+
         comment_author = User(build_link(comment_author))
 
         # Get the comment date from the abbr with the class timeago
@@ -204,5 +215,4 @@ def url_to_question(url: str) -> Question:
 
     question = Question(url, date, votes, views, user, title, content, tags,
                         comments, answers)
-    print(question)
     return question
