@@ -134,10 +134,10 @@ def scrap_comment(soup: BeautifulSoup) -> AbstractSet[Comment]:
         }).text.strip()
 
         # Get the comment author from the a href with the class author
-        comment_author = comment.find("a", {"class": "author"})['href']
+        comment_author = comment.find("a", {"class": "author"})
 
         if comment_author is not None:
-            comment_author = comment_author[1:]
+            comment_author = comment_author['href'][1:]
         else:
             comment_author = 'deleted'
 
