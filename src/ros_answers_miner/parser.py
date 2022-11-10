@@ -86,8 +86,15 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
         votes = int(ans.find("div", {"class": "vote-number"}).text)
 
         # Get the user of the answer
-        user = ans.find("div", {"class": "user-info"}).find("a")['href'][1:]
-        user = User(build_link(user))
+        user = ans.find("div", {"class": "user-info"})
+
+        # If the user does not exist, it is a deleted user
+        if user is not None:
+            user_link = build_link(user.find("a")['href'][1:])
+        else:
+            user_link = 'deleted'
+
+        user = User(user_link)
 
         # Get the comments of the answer
         comments = scrap_comment(ans)
