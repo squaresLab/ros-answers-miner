@@ -7,6 +7,7 @@ __all__ = ('url_to_question', )
 
 import logging
 import requests
+from datetime import datetime
 
 from bs4 import BeautifulSoup
 from typing import AbstractSet
@@ -83,6 +84,7 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
 
         # Get the date of the answer
         date = ans.find("abbr", {"class": "timeago"})['title']
+        date = datetime.strptime(date[:-6], '%Y-%m-%d %H:%M:%S')
 
         # Get the votes of the answer
         votes = int(ans.find("div", {"class": "vote-number"}).text)
@@ -140,6 +142,8 @@ def scrap_comment(soup: BeautifulSoup) -> AbstractSet[Comment]:
 
         # Get the comment date from the abbr with the class timeago
         comment_date = comment.find("abbr", {"class": "timeago"})['title']
+        comment_date = datetime.strptime(comment_date[:-6],
+                                         '%Y-%m-%d %H:%M:%S')
 
         # Build the comment
         comment = Comment(comment_date, comment_vote, comment_content,
@@ -153,6 +157,7 @@ def scrap_question_info(soup: BeautifulSoup) -> tuple:
 
     # Get the date of the question from the abbr with the class timeago
     date = soup.find("abbr", {"class": "timeago"})['title']
+    date = datetime.strptime(date[:-6], '%Y-%m-%d %H:%M:%S')
 
     # Get the question number of votes from the div with the vote-number class
     votes = int(soup.find("div", {"class": "vote-number"}).text)
