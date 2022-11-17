@@ -80,7 +80,7 @@ def scrap_answer(soup: BeautifulSoup) -> AbstractSet[Answer]:
             accepted = True
 
         # Get content of the answer
-        content = ans.find("div", {"class": "js-editable-content"})
+        content = str(ans.find("div", {"class": "js-editable-content"}))
 
         # Get the date of the answer
         date = ans.find("abbr", {"class": "timeago"})['title']
@@ -128,7 +128,7 @@ def scrap_comment(soup: BeautifulSoup) -> AbstractSet[Comment]:
             comment_vote = 0
 
         # Get the comment content from the div with the class comment-body
-        comment_content = comment.find("div", {"class": "comment-body"})
+        comment_content = str(comment.find("div", {"class": "comment-body"}))
 
         # Get the comment author from the a href with the class author
         comment_author = comment.find("a", {"class": "author"})
@@ -170,7 +170,7 @@ def scrap_question_info(soup: BeautifulSoup) -> tuple:
     # Get the question content. TODO: The images are not being scraped
     content = soup.find("div",
                         {"id": lambda l: l and l.startswith('js-post-body')})
-    content = content.find("div", {"class": "js-editable-content"})
+    content = str(content.find("div", {"class": "js-editable-content"}))
 
     # Get the list of tags in a question from the ul with id question-tags. The name is saved in the text
     tags = soup.find("ul", {
