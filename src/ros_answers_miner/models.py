@@ -20,7 +20,7 @@ class User:
 class Comment:
     date: str
     votes: int
-    content: Tag
+    content: str
 
     user: User
 
@@ -33,7 +33,7 @@ class Answer:
     votes: int
     user: User
 
-    content: Tag
+    content: str
     comments: AbstractSet[Comment]
 
 
@@ -48,7 +48,7 @@ class Question:
 
     # Content of the question
     title: str
-    content: Tag
+    content: str
 
     # Tags, comments and answers
     tags: AbstractSet[str]
