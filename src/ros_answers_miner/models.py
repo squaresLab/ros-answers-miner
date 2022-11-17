@@ -6,20 +6,24 @@ Answers.
 __all__ = ('Answer', 'Comment', 'Question', 'User')
 
 from typing import AbstractSet
+from bs4.element import Tag
 
 import attr
+
 
 @attr.s(auto_attribs=True, frozen=True)
 class User:
     url: str
 
+
 @attr.s(auto_attribs=True)
 class Comment:
     date: str
     votes: int
-    content: str
-    
+    content: Tag
+
     user: User
+
 
 @attr.s(auto_attribs=True)
 class Answer:
@@ -29,8 +33,9 @@ class Answer:
     votes: int
     user: User
 
-    content: str
+    content: Tag
     comments: AbstractSet[Comment]
+
 
 @attr.s(auto_attribs=True)
 class Question:
@@ -40,13 +45,12 @@ class Question:
     votes: int
     views: int
     user: User
-    
+
     # Content of the question
     title: str
-    content: str
+    content: Tag
 
     # Tags, comments and answers
     tags: AbstractSet[str]
     comments: AbstractSet[Comment]
     answers: AbstractSet[Answer]
-    
