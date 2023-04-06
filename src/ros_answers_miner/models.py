@@ -5,10 +5,7 @@ Answers.
 """
 __all__ = ('Answer', 'Comment', 'Question', 'User')
 
-from typing import AbstractSet
-
-import attr
-
+from sortedcollections import OrderedSet
 
 class User:
     url: str
@@ -24,6 +21,12 @@ class User:
 
     def __eq__(self, other):
         return isinstance(other, User) and self.__key() == other.__key()
+
+    def to_json(self):
+        return {
+            '__class__': 'User',
+            'url': self.url
+        }
 
 
 class Comment:
@@ -48,6 +51,15 @@ class Comment:
     def __eq__(self, other):
         return isinstance(other, Comment) and self.__key() == other.__key()
 
+    def to_json(self):
+        return {
+            '__class__': 'Comment',
+            'date': str(self.date),
+            'votes': self.votes,
+            'content': self.content,
+            'user': self.user.to_json()
+        }
+
 
 class Answer:
     accepted: bool
@@ -57,7 +69,7 @@ class Answer:
     user: User
 
     content: str
-    comments: AbstractSet[Comment]
+    comments: OrderedSet[Comment]
 
     def __init__(self, accepted, date, votes, user, content, comments):
         self.accepted = accepted
@@ -76,6 +88,17 @@ class Answer:
     def __eq__(self, other):
         return isinstance(other, Answer) and self.__key() == other.__key()
 
+    def to_json(self):
+        return {
+            '__class__': 'Answer',
+            'accepted': self.accepted,
+            'date': str(self.date),
+            'votes': self.votes,
+            'user': self.user.to_json(),
+            'content': self.content,
+            'comments': OrderedSet([comment.to_json() for comment in self.comments])
+        }
+
 
 class Question:
     # Default information about a question
@@ -90,9 +113,9 @@ class Question:
     content: str
 
     # Tags, comments and answers
-    tags: AbstractSet[str]
-    comments: AbstractSet[Comment]
-    answers: AbstractSet[Answer]
+    tags: OrderedSet[str]
+    comments: OrderedSet[Comment]
+    answers: OrderedSet[Answer]
 
     def __init__(self, url, date, votes, views, user, title, content, tags, comments, answers):
         self.url = url
@@ -115,3 +138,18 @@ class Question:
 
     def __eq__(self, other):
         return isinstance(other, Question) and self.__key() == other.__key()
+
+    def to_json(self):
+        return {
+            '__class__': 'Question',
+            'url': self.url,
+            'date': str(self.date),
+            'votes': self.votes,
+            'views': self.views,
+            'user': self.user.to_json(),
+            'title': self.title,
+            'content': self.content,
+            'tags': OrderedSet(list(self.tags)),
+            'comments': OrderedSet([comment.to_json() for comment in self.comments]),
+            'answers': OrderedSet([answer.to_json() for answer in self.answers])
+        }
