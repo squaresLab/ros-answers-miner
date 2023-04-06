@@ -12,7 +12,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from typing import AbstractSet
 
-from ros_answers_miner.models import Question, Answer, Comment, User
+from .models import Question, Answer, Comment, User
 
 
 def build_link(url: str) -> str:

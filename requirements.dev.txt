@@ -6,3 +6,4 @@ tox==3.14.1
 wheel==0.34.2
 pep8-naming==0.10.0
 bs4==4.11.1
+sortedcollections==2.1.0
